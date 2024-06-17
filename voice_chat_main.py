@@ -8,7 +8,7 @@ from openai import OpenAI
 from langchain.tools.render import format_tool_to_openai_function
 
 from utils.audio_utils import listener, record_wav, speech_to_text, text_to_speech, close_stream
-from utils.bot_tools import get_current_temperature, lights_on, search_wikipedia
+from utils.bot_tools import get_current_temperature, lights_on, search_wikipedia, scrape_news
 
 
 load_dotenv()
@@ -45,7 +45,7 @@ Keep answers short--only 3-4 sentences max.
 # Voices to choose from, Nicole, Arjun, Knightley, Natasha, Lily, Jeremy
 ELEVENLABS_VOICE_NAME = "Nicole"
 
-tools = [get_current_temperature, lights_on, search_wikipedia]
+tools = [get_current_temperature, lights_on, search_wikipedia, scrape_news]
 functions = [format_tool_to_openai_function(f) for f in tools]
 
 def main(tools):
