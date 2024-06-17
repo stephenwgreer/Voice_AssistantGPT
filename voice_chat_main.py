@@ -43,7 +43,7 @@ Keep answers short--only 3-4 sentences max.
 """
 
 # Voices to choose from, Nicole, Arjun, Knightley, Natasha, Lily, Jeremy
-ELEVENLABS_VOICE_NAME = "Nicole"
+ELEVENLABS_VOICE_NAME = "Stephen_G"
 
 tools = [get_current_temperature, lights_on, search_wikipedia, scrape_news]
 functions = [format_tool_to_openai_function(f) for f in tools]
