@@ -79,11 +79,12 @@ def main(tools):
         response = get_completion(messages)
 
         print("Response Recieved")
-        if response.get("function_call"):
+        print(response)
+        if response.function_call:
           tools = tools
-          function_name = response["function_call"]["name"]
+          function_name = response.function_call.name
           func_to_call = next(filter(lambda x: x.name == function_name, tools), None)
-          args = json.loads(response["function_call"]["arguments"])
+          args = json.loads(response.function_call.arguments)
           print(args)
           func_response = func_to_call(args)
           messages.append({"role": "function", "name": function_name, "content": func_response})
