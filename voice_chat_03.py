@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import json
 
 import pvporcupine
-import openai
+from openai import OpenAI
 from langchain.tools.render import format_tool_to_openai_function
 
 from utils.audio_utils import listener, record_wav, speech_to_text, text_to_speech, close_stream
@@ -14,15 +14,19 @@ from utils.bot_tools import get_current_temperature, lights_on, search_wikipedia
 load_dotenv()
 
 # Load API keys
-openai.api_key = os.getenv("OPENAI_API_KEY")
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 pvpkey = os.getenv("PICO_VOICE_KEY")
 access_key = f"{pvpkey}"
 
+client = OpenAI(
+  api_key=os.getenv("OPENAI_API_KEY"),  # this is also the default, it can be omitted
+)
+
 # Wake word and sleep word
-wakeword = ['wakeword\Hey-Judy_en_windows_v3_0_0.ppn']
-sleep_word = "exit"
+wakeword = ['wakeword\hey-steven_en_windows_v3_0_0.ppn']
+SLEEP_WORD = "exit"
+SHUT_DOWN = "shut down"
 
 #initialize the wakeword detection
 handle = pvporcupine.create(access_key=access_key, keyword_paths=wakeword)
@@ -64,7 +68,7 @@ def main(tools):
         # Convert audio into text.
         question = speech_to_text("input.wav")
 
-        if sleep_word in question.lower():
+        if SLEEP_WORD in question.lower():
             playsound("sounds/confirm.wav")
             break
 
@@ -104,11 +108,10 @@ def main(tools):
             continue
     
     close_stream(stream, audio)
-        
 
-def get_completion(messages, model="gpt-3.5-turbo", temperature=0,max_tokens=2000):
+def get_completion(messages, model="gpt-4", temperature=0,max_tokens=2000):
 
-  response = openai.ChatCompletion.create(
+  response = client.chat.completions.create(
     model=model,
     temperature=temperature,
     max_tokens=max_tokens,
@@ -116,8 +119,6 @@ def get_completion(messages, model="gpt-3.5-turbo", temperature=0,max_tokens=200
     functions=functions
   )
   return response.choices[0].message
-
-
 
 if __name__ == "__main__":
     main(tools)

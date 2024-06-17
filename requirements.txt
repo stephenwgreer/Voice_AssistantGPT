@@ -2,7 +2,7 @@ pyaudio==0.2.14
 google-cloud-speech==2.22.0
 google-cloud-texttospeech==2.14.2
 pydub==0.25.1
-openai==0.27.2
+openai==1.11.1
 python-dotenv==1.0.0
 pvporcupine==3.0.1
 langchain==0.0.319
