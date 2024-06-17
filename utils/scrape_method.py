@@ -107,7 +107,7 @@ def get_new_links(existing_links, scraped_links):
 #     for title, link in new_links:
 #         email_content += f"{title}: {link}\n"
 
-#     recipient_email = ["stephenwgreer@gmail.com","stephen.greer@sas.com"]
+#     recipient_email = ["EMAIL"]
 
 #     msg = EmailMessage()
 #     msg.set_content(email_content)
