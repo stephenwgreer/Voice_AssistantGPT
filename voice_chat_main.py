@@ -6,6 +6,7 @@ import json
 import pvporcupine
 from openai import OpenAI
 from langchain.tools.render import format_tool_to_openai_function
+from langchain_core.utils.function_calling import convert_to_openai_function
 
 from utils.audio_utils import listener, record_wav, speech_to_text, text_to_speech, close_stream
 from utils.bot_tools import get_current_temperature, lights_on, search_wikipedia, scrape_news
@@ -46,7 +47,7 @@ Keep answers short--only 3-4 sentences max.
 ELEVENLABS_VOICE_NAME = "Stephen_G"
 
 tools = [get_current_temperature, lights_on, search_wikipedia, scrape_news]
-functions = [format_tool_to_openai_function(f) for f in tools]
+functions = [convert_to_openai_function(f) for f in tools]
 
 def main(tools):
 
