@@ -7,7 +7,7 @@ __pycache__/
 *.so
 
 # Google API
-/test_api
+/test_api*
 
 # Distribution / packaging
 .Python
