@@ -7,7 +7,6 @@ __pycache__/
 *.so
 
 # Google API
-/test_api*
 test-api-304521-8d2d17c5f2a4.json
 
 # Distribution / packaging
