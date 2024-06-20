@@ -8,6 +8,7 @@ __pycache__/
 
 # Google API
 /test_api*
+test-api-304521-8d2d17c5f2a4.json
 
 # Distribution / packaging
 .Python
