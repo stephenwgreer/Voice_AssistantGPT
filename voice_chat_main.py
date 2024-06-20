@@ -10,7 +10,6 @@ from langchain_core.utils.function_calling import convert_to_openai_function
 from utils.audio_utils import listener, record_wav, speech_to_text, text_to_speech, close_stream
 from utils.bot_tools import get_current_temperature, lights_on, search_wikipedia, scrape_news
 
-
 load_dotenv()
 
 # Load API keys
