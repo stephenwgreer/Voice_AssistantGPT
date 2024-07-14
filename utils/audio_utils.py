@@ -138,6 +138,8 @@ def listener(handle):
             # Detection event logic/callback
             break
     
+    close_stream(stream, audio)
+    
     return
 
 

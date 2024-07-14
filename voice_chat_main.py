@@ -7,7 +7,7 @@ import pvporcupine
 from openai import OpenAI
 from langchain_core.utils.function_calling import convert_to_openai_function
 
-from utils.audio_utils import listener, record_wav, speech_to_text, text_to_speech, close_stream
+from utils.audio_utils import listener, speech_to_text, text_to_speech, close_stream
 from utils.bot_tools import get_current_temperature, lights_on, search_wikipedia, scrape_news
 
 load_dotenv()
@@ -59,8 +59,6 @@ def main(tools):
     response_count = 0
 
     while True:
-        # # Get WAV from microphone.
-        # record_wav(stream, audio)
 
         # Convert audio into text.
         question = speech_to_text()
@@ -104,8 +102,6 @@ def main(tools):
             break
         else:
             continue
-    
-    close_stream(stream, audio)
 
 def get_completion(messages, model="gpt-4", temperature=0,max_tokens=2000):
 
