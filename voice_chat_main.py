@@ -2,6 +2,7 @@ import os
 from playsound import playsound
 from dotenv import load_dotenv
 import json
+import time
 
 import pvporcupine
 from openai import OpenAI
@@ -11,6 +12,7 @@ from utils.audio_utils import listener, speech_to_text, text_to_speech, close_st
 from utils.bot_tools import get_current_temperature, lights_on, search_wikipedia, scrape_news
 
 load_dotenv()
+
 
 # Load API keys
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
@@ -46,19 +48,21 @@ tools = [get_current_temperature, lights_on, search_wikipedia, scrape_news]
 functions = [convert_to_openai_function(f) for f in tools]
 
 def main(tools):
+    
+    messages=[
+    {"role": "system", "content": AGENT_CONTEXT},
+    # {"role": "assistant", "content":""}
+    # {"role": "function", "content":""}
+    ]
 
     listener(handle)
-
-    messages=[
-      {"role": "system", "content": AGENT_CONTEXT},
-      # {"role": "assistant", "content":""}
-      # {"role": "function", "content":""}
-      ]
     
     count = 0
     response_count = 0
 
     while True:
+        # tracking response time
+        resp_start = time.time() 
 
         # Convert audio into text.
         question = speech_to_text()
@@ -93,6 +97,10 @@ def main(tools):
           text_to_speech(content, response_count, ELEVENLABS_API_KEY, ELEVENLABS_VOICE_NAME)
           print(content + "\n")
 
+        # Printing response time for the voice assistant
+        resp_end = time.time()
+        print(f"Total response time: {resp_end - resp_start}")
+
         # Convert ChatGPT response into audio.
         playsound(f"response/result{response_count}.mp3")
         
@@ -102,6 +110,8 @@ def main(tools):
             break
         else:
             continue
+    
+
 
 def get_completion(messages, model="gpt-4", temperature=0,max_tokens=2000):
 
