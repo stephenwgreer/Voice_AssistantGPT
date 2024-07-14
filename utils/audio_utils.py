@@ -5,35 +5,58 @@ import pyaudio
 import wave
 import numpy as np
 from playsound import playsound
+import speech_recognition as sr
 
 from google.cloud import speech
 
-def speech_to_text(speech_file):
+def speech_to_text():
+    # Create a Recognizer instance
+    recognizer = sr.Recognizer()
+
+    # Use the Microphone as the audio source
+    with sr.Microphone() as source:
+        # Adjust for ambient noise
+        recognizer.adjust_for_ambient_noise(source, duration=1)
+        print("Listening...")
+
+        # Capture the audio
+        audio_data = recognizer.listen(source)
+
+        try:
+            # Recognize speech using Google Web Speech API
+            text = recognizer.recognize_google(audio_data)
+            print("Transcription: ", text)
+        except sr.UnknownValueError:
+            print("Google Web Speech API could not understand the audio")
+        except sr.RequestError as e:
+            print(f"Could not request results from Google Web Speech API; {e}")
+        
+        return text
     
-    print("Transforming speech into text...")
+    # print("Transforming speech into text...")
     
-    client = speech.SpeechClient()
+    # client = speech.SpeechClient()
 
-    with io.open(speech_file, "rb") as audio_file:
-            content = audio_file.read()
+    # with io.open(speech_file, "rb") as audio_file:
+    #         content = audio_file.read()
 
-    audio = speech.RecognitionAudio(content=content)
+    # audio = speech.RecognitionAudio(content=content)
 
-    config = speech.RecognitionConfig(
-        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-        language_code="en-US",
-    )
+    # config = speech.RecognitionConfig(
+    #     encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+    #     language_code="en-US",
+    # )
 
-    # Detects speech in the audio file
-    response = client.recognize(config=config, audio=audio)
+    # # Detects speech in the audio file
+    # response = client.recognize(config=config, audio=audio)
 
-    stt = ""
-    for result in response.results:
-        stt += result.alternatives[0].transcript
+    # stt = ""
+    # for result in response.results:
+    #     stt += result.alternatives[0].transcript
 
-    print("Transformation Complete")
+    # print("Transformation Complete")
 
-    return stt
+    # return stt
 
 def text_to_speech(tts, response_count, ELEVENLABS_API_KEY, ELEVENLABS_VOICE_NAME):
     ELEVENLABS_VOICE_STABILITY = 0.30
@@ -115,7 +138,7 @@ def listener(handle):
             # Detection event logic/callback
             break
     
-    return stream, audio
+    return
 
 
 def record_wav(stream, audio):

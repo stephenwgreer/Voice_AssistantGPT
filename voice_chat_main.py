@@ -30,8 +30,6 @@ SHUT_DOWN = "shut down"
 #initialize the wakeword detection
 handle = pvporcupine.create(access_key=access_key, keyword_paths=wakeword)
 
-gpt_response = ""
-
 delimiter = "####"
 
 AGENT_CONTEXT="""
@@ -49,7 +47,7 @@ functions = [convert_to_openai_function(f) for f in tools]
 
 def main(tools):
 
-    stream, audio = listener(handle)
+    listener(handle)
 
     messages=[
       {"role": "system", "content": AGENT_CONTEXT},
@@ -61,11 +59,11 @@ def main(tools):
     response_count = 0
 
     while True:
-        # Get WAV from microphone.
-        record_wav(stream, audio)
+        # # Get WAV from microphone.
+        # record_wav(stream, audio)
 
         # Convert audio into text.
-        question = speech_to_text("input.wav")
+        question = speech_to_text()
 
         if SLEEP_WORD in question.lower():
             playsound("sounds/confirm.wav")
