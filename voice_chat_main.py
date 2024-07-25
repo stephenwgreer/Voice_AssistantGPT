@@ -5,11 +5,11 @@ import json
 import time
 
 import pvporcupine
-from openai import OpenAI
 from langchain_core.utils.function_calling import convert_to_openai_function
 
 from utils.audio_utils import listener, speech_to_text, text_to_speech, close_stream
 from utils.bot_tools import get_current_temperature, lights_on, search_wikipedia, scrape_news
+from utils.agent_model import Assistant
 
 load_dotenv()
 
@@ -20,14 +20,14 @@ ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 pvpkey = os.getenv("PICO_VOICE_KEY")
 access_key = f"{pvpkey}"
 
-client = OpenAI(
-  api_key=os.getenv("OPENAI_API_KEY"),  # this is also the default, it can be omitted
-)
-
 # Wake word and sleep word
 wakeword = ['wakeword\hey-steven_en_windows_v3_0_0.ppn']
 SLEEP_WORD = "exit"
 SHUT_DOWN = "shut down"
+
+# option to allow you to switch between different model APIs
+# Options include: "get_openai_completion", "anthropic", "google"
+agent_api="get_openai_completion"
 
 #initialize the wakeword detection
 handle = pvporcupine.create(access_key=access_key, keyword_paths=wakeword)
@@ -35,7 +35,7 @@ handle = pvporcupine.create(access_key=access_key, keyword_paths=wakeword)
 delimiter = "####"
 
 AGENT_CONTEXT="""
-You a use a bot which can converse or use specific tools. 
+Your name is Stephen. You are a bot which can converse or use specific tools. 
 If a question is asked which uses a tool, don't assume--ask clarifying questions where needed.
 When approriate ask questions at the end of responses to keep the conversation going. 
 Keep answers short--only 3-4 sentences max.
@@ -75,7 +75,7 @@ def main(tools):
 
         # Send text to ChatGPT.
         print(f"Asking: {question}")
-        response = get_completion(messages)
+        response = getattr(Assistant, agent_api)(messages, functions)
 
         print("Response Recieved")
         print(response)
@@ -87,7 +87,7 @@ def main(tools):
           print(args)
           func_response = func_to_call(args)
           messages.append({"role": "function", "name": function_name, "content": func_response})
-          function_return = get_completion(messages)
+          function_return = getattr(Assistant, agent_api)(messages, functions)
           text_to_speech(function_return.content, response_count, ELEVENLABS_API_KEY, ELEVENLABS_VOICE_NAME)
           print(function_return.content + "\n")
         
@@ -104,25 +104,6 @@ def main(tools):
         # Convert ChatGPT response into audio.
         playsound(f"response/result{response_count}.mp3")
         
-        response_count += 1
-        count += 1
-        if count > 2:
-            break
-        else:
-            continue
-    
-
-
-def get_completion(messages, model="gpt-4", temperature=0,max_tokens=2000):
-
-  response = client.chat.completions.create(
-    model=model,
-    temperature=temperature,
-    max_tokens=max_tokens,
-    messages=messages,
-    functions=functions
-  )
-  return response.choices[0].message
 
 if __name__ == "__main__":
     main(tools)
