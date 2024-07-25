@@ -8,3 +8,4 @@ pvporcupine==3.0.1
 langchain==0.1.5
 wikipedia==1.4.0
 beautifulsoup4==4.12.2p
+SpeechRecognition==3.10.4
